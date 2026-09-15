@@ -2,7 +2,7 @@
   "name": "fitness-ecosystem",
   "private": true,
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=20 <25"
   },
   "workspaces": ["apps/*", "backend", "packages/*"],
   "scripts": {
