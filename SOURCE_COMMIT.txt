@@ -1,0 +1,4 @@
+Repository: https://github.com/Egety-Group/wellness-app
+Branch: main
+Commit: ad49bb5146a09eb34880d2e2aa9cc44bab004cbc
+Contents: Shared Core backend plus Nutrition backend and successful PostgreSQL production API verification.

@@ -1,0 +1,1 @@
+export type ModuleName = 'nutrition' | 'fitness' | 'weight_body' | 'sleep_recovery' | 'mental_wellness' | 'habits_lifestyle' | 'beauty_selfcare' | 'preventive_wellness' | 'womens_wellness' | 'mens_wellness' | 'family_wellness' | 'workplace_wellness' | 'coaching' | 'connected_health' | 'community' | 'education';

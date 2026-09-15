@@ -1,0 +1,327 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GoalStatus {
+  active
+  completed
+  abandoned
+}
+
+enum SubscriptionPlan {
+  free
+  premium
+  pro
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  expired
+  trial
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+enum Theme {
+  light
+  dark
+  system
+}
+
+enum WeightUnit {
+  kg
+  lbs
+}
+
+enum DistanceUnit {
+  km
+  miles
+}
+
+enum NutritionMealType {
+  breakfast
+  lunch
+  dinner
+  snack
+}
+
+model User {
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  passwordHash      String             @map("password_hash")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  profile           Profile?
+  refreshTokens     RefreshToken[]
+  subscription      Subscription?
+  goals             Goal[]
+  bodyMeasurements  BodyMeasurement[]
+  activitySummaries ActivitySummary[]
+  streaks           Streak[]
+  notifications     Notification[]
+  settings          Setting?
+  modules           UserModule[]
+  consents          UserConsent[]
+  auditLogs         AuditLog[]
+  nutritionFoods    NutritionFood[]
+  nutritionMealLogs NutritionMealLog[]
+  nutritionWaterLogs NutritionWaterLog[]
+
+  @@map("users")
+}
+
+model NutritionFood {
+  id                  String             @id @default(uuid())
+  userId              String?            @map("user_id")
+  name                String
+  brand               String?
+  caloriesPer100g     Decimal            @map("calories_per_100g") @db.Decimal(7, 2)
+  proteinPer100g      Decimal            @default(0) @map("protein_per_100g") @db.Decimal(6, 2)
+  carbsPer100g        Decimal            @default(0) @map("carbs_per_100g") @db.Decimal(6, 2)
+  fatPer100g          Decimal            @default(0) @map("fat_per_100g") @db.Decimal(6, 2)
+  fiberPer100g        Decimal            @default(0) @map("fiber_per_100g") @db.Decimal(6, 2)
+  sugarPer100g        Decimal            @default(0) @map("sugar_per_100g") @db.Decimal(6, 2)
+  isCustom            Boolean            @default(false) @map("is_custom")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+  user                User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  mealLogs            NutritionMealLog[]
+
+  @@index([userId, name])
+  @@map("nutrition_foods")
+}
+
+model NutritionMealLog {
+  id        String            @id @default(uuid())
+  userId    String            @map("user_id")
+  foodId    String            @map("food_id")
+  mealType  NutritionMealType @map("meal_type")
+  quantityG Decimal           @map("quantity_g") @db.Decimal(7, 2)
+  calories  Decimal           @db.Decimal(7, 2)
+  protein   Decimal           @default(0) @db.Decimal(7, 2)
+  carbs     Decimal           @default(0) @db.Decimal(7, 2)
+  fat       Decimal           @default(0) @db.Decimal(7, 2)
+  loggedAt  DateTime          @map("logged_at") @db.Date
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  food      NutritionFood     @relation(fields: [foodId], references: [id], onDelete: Restrict)
+
+  @@index([userId, loggedAt, mealType])
+  @@index([foodId])
+  @@map("nutrition_meal_logs")
+}
+
+model NutritionWaterLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  amountMl  Int      @map("amount_ml")
+  loggedAt  DateTime @map("logged_at") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, loggedAt])
+  @@map("nutrition_water_logs")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  dateOfBirth   DateTime? @map("date_of_birth") @db.Date
+  gender        Gender?
+  heightCm      Decimal? @map("height_cm") @db.Decimal(6, 2)
+  weightKg      Decimal? @map("weight_kg") @db.Decimal(6, 2)
+  fitnessGoal   String?  @map("fitness_goal")
+  activityLevel String?  @map("activity_level")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  userId    String             @unique @map("user_id")
+  plan      SubscriptionPlan   @default(free)
+  status    SubscriptionStatus @default(active)
+  expiresAt DateTime?          @map("expires_at")
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Goal {
+  id           String     @id @default(uuid())
+  userId       String     @map("user_id")
+  category     String
+  title        String
+  targetValue  Decimal?   @map("target_value") @db.Decimal(12, 2)
+  currentValue Decimal?   @default(0) @map("current_value") @db.Decimal(12, 2)
+  unit         String?
+  deadline     DateTime?  @db.Date
+  status       GoalStatus @default(active)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("goals")
+}
+
+model BodyMeasurement {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  measuredAt     DateTime @map("measured_at")
+  weightKg       Decimal? @map("weight_kg") @db.Decimal(6, 2)
+  bodyFatPercent Decimal? @map("body_fat_percent") @db.Decimal(5, 2)
+  muscleMassKg   Decimal? @map("muscle_mass_kg") @db.Decimal(6, 2)
+  waistCm        Decimal? @map("waist_cm") @db.Decimal(6, 2)
+  chestCm        Decimal? @map("chest_cm") @db.Decimal(6, 2)
+  hipsCm         Decimal? @map("hips_cm") @db.Decimal(6, 2)
+  armsCm         Decimal? @map("arms_cm") @db.Decimal(6, 2)
+  thighsCm       Decimal? @map("thighs_cm") @db.Decimal(6, 2)
+  neckCm         Decimal? @map("neck_cm") @db.Decimal(6, 2)
+  createdAt      DateTime @default(now()) @map("created_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, measuredAt])
+  @@map("body_measurements")
+}
+
+model ActivitySummary {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  date           DateTime @db.Date
+  steps          Int      @default(0)
+  caloriesBurned Decimal  @default(0) @map("calories_burned") @db.Decimal(10, 2)
+  activeMinutes  Int      @default(0) @map("active_minutes")
+  distanceKm     Decimal  @default(0) @map("distance_km") @db.Decimal(10, 2)
+  waterMl        Int      @default(0) @map("water_ml")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("activity_summaries")
+}
+
+model Streak {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  type             String
+  currentStreak    Int       @default(0) @map("current_streak")
+  longestStreak    Int       @default(0) @map("longest_streak")
+  lastActivityDate DateTime? @map("last_activity_date") @db.Date
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("streaks")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  type      String
+  title     String
+  body      String
+  data      Json?
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model Setting {
+  id                   String       @id @default(uuid())
+  userId               String       @unique @map("user_id")
+  language             String       @default("en")
+  weightUnit           WeightUnit   @default(kg) @map("weight_unit")
+  distanceUnit         DistanceUnit @default(km) @map("distance_unit")
+  theme                 Theme        @default(system)
+  notificationsEnabled Boolean      @default(true) @map("notifications_enabled")
+  workoutReminders     Boolean      @default(true) @map("workout_reminders")
+  nutritionReminders   Boolean      @default(true) @map("nutrition_reminders")
+  sleepReminders       Boolean      @default(true) @map("sleep_reminders")
+  streakAlerts         Boolean      @default(true) @map("streak_alerts")
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
+
+model UserModule {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  moduleName  String    @map("module_name")
+  isActive    Boolean   @default(true) @map("is_active")
+  activatedAt DateTime? @map("activated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleName])
+  @@map("user_modules")
+}
+
+model UserConsent {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  module    String
+  dataType  String    @map("data_type")
+  granted   Boolean   @default(false)
+  grantedAt DateTime? @map("granted_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, module, dataType])
+  @@map("user_consents")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}

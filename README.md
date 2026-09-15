@@ -1,6 +1,6 @@
-# Nutrition Backend Handoff
+# Fitty Nutrition
 
-This package contains the shared Wellness Core backend plus the Nutrition backend module. It is intended for frontend integration and contains no frontend application, Git history, installed dependencies, or secrets.
+Full-stack, mobile-first Nutrition application with a React PWA frontend and a NestJS/PostgreSQL backend.
 
 ## Included
 
@@ -10,6 +10,8 @@ This package contains the shared Wellness Core backend plus the Nutrition backen
 - Shared API contracts, validation, types, and utilities.
 - Docker and deployment configuration.
 - Automated Nutrition production API verification.
+- Responsive Nutrition overview, meal diary, food logging, hydration, progress, and profile experiences.
+- Render Blueprint for cloud-only deployment of the frontend, API, and database.
 
 ## Local API setup
 
@@ -36,6 +38,6 @@ All Nutrition endpoints require a bearer access token obtained from `/api/v1/reg
 
 Request and response fields at the API boundary use `snake_case`. The canonical interfaces are exported from `packages/api-contracts/src/nutrition`.
 
-## Source-of-truth rule
+## Web application
 
-The Wellness Core repository remains the canonical source for both the common backend and the Nutrition backend module. Backend fixes made while integrating the frontend must be contributed back to Core before refreshing this handoff package.
+The frontend is in `apps/web`. It is a responsive, installable web application designed to work on mobile, tablet, and desktop. The production build is published by Render; users do not need a local development environment.

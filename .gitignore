@@ -1,0 +1,21 @@
+# Backend
+backend/.env
+backend/vendor/
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+
+# Legacy root-level folders (pre-restructure)
+vendor/
+node_modules/
+.env
+/legacy/
+
+# Frontend
+apps/*/node_modules/
+apps/*/.expo/
+apps/*/dist/

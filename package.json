@@ -1,0 +1,16 @@
+{
+  "name": "fitness-ecosystem",
+  "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "workspaces": ["apps/*", "backend", "packages/*"],
+  "scripts": {
+    "build": "npm run build --workspace=@fitness/backend && npm run build --workspace=@fitty/nutrition-web",
+    "build:web": "npm run build --workspace=@fitty/nutrition-web",
+    "test": "npm run test --workspace=@fitness/backend",
+    "lint": "npm run lint --workspace=@fitness/backend",
+    "dev:backend": "npm run start:dev --workspace=@fitness/backend",
+    "dev:web": "npm run dev --workspace=@fitty/nutrition-web"
+  }
+}
