@@ -11,6 +11,8 @@
     "test": "npm run test --workspace=@fitness/backend",
     "lint": "npm run lint --workspace=@fitness/backend",
     "dev:backend": "npm run start:dev --workspace=@fitness/backend",
-    "dev:web": "npm run dev --workspace=@fitty/nutrition-web"
+    "dev:web": "npm run dev --workspace=@fitty/nutrition-web",
+    "start:mobile": "npm run start --workspace=@fitty/nutrition-mobile",
+    "check:mobile": "npm run check --workspace=@fitty/nutrition-mobile"
   }
 }

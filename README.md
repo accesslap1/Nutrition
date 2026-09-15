@@ -41,3 +41,7 @@ Request and response fields at the API boundary use `snake_case`. The canonical 
 ## Web application
 
 The frontend is in `apps/web`. It is a responsive, installable web application designed to work on mobile, tablet, and desktop. The production build is published by Render; users do not need a local development environment.
+
+## Expo mobile application
+
+The universal React Native app is in `apps/mobile` and runs on Android, iOS, and web. `eas.json` includes an internal Android preview profile that produces an installable APK. The GitHub Actions workflow **Build Android preview** starts the cloud build after the repository is linked to an Expo project and the `EXPO_TOKEN` repository secret is configured.
