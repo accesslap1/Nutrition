@@ -1,6 +1,11 @@
 name: Build Android preview
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - apps/mobile/**
+      - .github/workflows/eas-preview.yml
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,6 +19,9 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+      - name: Create or link Expo project
+        working-directory: apps/mobile
+        run: eas project:init --account omarb121s-team --non-interactive
       - name: Build installable Android preview
         working-directory: apps/mobile
         run: eas build --platform android --profile preview --non-interactive --no-wait
