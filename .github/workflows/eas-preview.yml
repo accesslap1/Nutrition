@@ -1,12 +1,13 @@
-name: Diagnose Android preview
+name: Build Android preview
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
+      - apps/mobile/**
       - .github/workflows/eas-preview.yml
 jobs:
-  diagnose:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +21,9 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-      - name: Link Expo project
+      - name: Create or link Expo project
         working-directory: apps/mobile
         run: eas project:init --account omarb121s-team --non-interactive
-      - name: Inspect failed Expo build
+      - name: Build installable Android preview
         working-directory: apps/mobile
-        run: eas build:view 673cab07-229d-4a55-bf16-7c4c6d8702aa --json
+        run: eas build --platform android --profile preview --non-interactive --no-wait
