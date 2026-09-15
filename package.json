@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=20 <25"
   },
-  "workspaces": ["apps/*", "backend", "packages/*"],
+  "workspaces": ["apps/web", "backend", "packages/*"],
   "scripts": {
     "build": "npm run build --workspace=@fitness/backend && npm run build --workspace=@fitty/nutrition-web",
     "build:web": "npm run build --workspace=@fitty/nutrition-web",
@@ -12,7 +12,7 @@
     "lint": "npm run lint --workspace=@fitness/backend",
     "dev:backend": "npm run start:dev --workspace=@fitness/backend",
     "dev:web": "npm run dev --workspace=@fitty/nutrition-web",
-    "start:mobile": "npm run start --workspace=@fitty/nutrition-mobile",
-    "check:mobile": "npm run check --workspace=@fitty/nutrition-mobile"
+    "start:mobile": "npm --prefix apps/mobile run start",
+    "check:mobile": "npm --prefix apps/mobile run check"
   }
 }
