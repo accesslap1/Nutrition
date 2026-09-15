@@ -1,6 +1,6 @@
 {
   "expo":{
-    "name":"Fitty Nutrition","slug":"fitty-nutrition","version":"1.0.0","orientation":"portrait","scheme":"fittynutrition","userInterfaceStyle":"light","newArchEnabled":true,
+    "name":"Fitty Nutrition","slug":"fitty-nutrition","owner":"omarb121s-team","version":"1.0.0","orientation":"portrait","scheme":"fittynutrition","userInterfaceStyle":"light","newArchEnabled":true,
     "android":{"package":"com.accesslb.fittynutrition"},
     "ios":{"bundleIdentifier":"com.accesslb.fittynutrition","supportsTablet":true},
     "web":{"bundler":"metro"},
