@@ -32,7 +32,7 @@ services:
     name: fitty-nutrition
     runtime: static
     branch: main
-    buildCommand: npm ci && npm run build:web
+    buildCommand: npm install && npm run build:web
     staticPublishPath: ./apps/web/dist
     autoDeployTrigger: commit
     routes:
