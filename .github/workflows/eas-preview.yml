@@ -14,7 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: npm install --workspaces=false
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
